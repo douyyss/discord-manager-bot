@@ -41,7 +41,7 @@ calendar_service = build("calendar", "v3", credentials=credentials)
 
 @bot.event
 async def on_ready():
-print("Logged in as", bot.user)
+    print("Logged in as", bot.user)
 
 @bot.event
 async def on_message(message):
