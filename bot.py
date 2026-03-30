@@ -105,7 +105,7 @@ async def on_message(message):
             await message.add_reaction("📅")
 
     # AUDIO SAVE
-       if message.channel.id == AUDIO_CHANNEL:
+    if message.channel.id == AUDIO_CHANNEL:
         for attachment in message.attachments:
 
             file_data = await attachment.read()
