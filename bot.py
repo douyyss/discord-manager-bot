@@ -105,7 +105,7 @@ async def on_message(message):
             await message.add_reaction("📅")
 
     # AUDIO SAVE
-    if message.channel.id == AUDIO_CHANNEL:
+       if message.channel.id == AUDIO_CHANNEL:
         for attachment in message.attachments:
 
             file_data = await attachment.read()
@@ -123,7 +123,8 @@ async def on_message(message):
             drive_service.files().create(
                 body=file_metadata,
                 media_body=media,
-                supportsAllDrives=True
+                supportsAllDrives=True,
+                fields="id"
             ).execute()
 
             await message.add_reaction("💾")
