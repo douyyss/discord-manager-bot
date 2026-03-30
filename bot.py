@@ -1,8 +1,8 @@
-```python
 import discord
 import os
 import datetime
 import io
+import json
 from discord.ext import commands
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -22,14 +22,12 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# Google認証
-import json
 creds_dict = json.loads(GOOGLE_CREDENTIALS)
 
 scope = [
-    "https://spreadsheets.google.com/feeds",
-    "https://www.googleapis.com/auth/drive",
-    "https://www.googleapis.com/auth/calendar"
+"https://spreadsheets.google.com/feeds",
+"https://www.googleapis.com/auth/drive",
+"https://www.googleapis.com/auth/calendar"
 ]
 
 credentials = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
@@ -43,73 +41,71 @@ calendar_service = build("calendar", "v3", credentials=credentials)
 
 @bot.event
 async def on_ready():
-    print(f"Logged in as {bot.user}")
+print(f"Logged in as {bot.user}")
 
 @bot.event
 async def on_message(message):
 
-    if message.author == bot.user:
-        return
+```
+if message.author == bot.user:  
+    return  
 
-    # TODO BOT
-    if message.channel.id == TODO_CHANNEL:
+if message.channel.id == TODO_CHANNEL:  
 
-        text = message.content
-        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    text = message.content  
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")  
 
-        sheet.append_row([text, "未完了", now])
+    sheet.append_row([text, "未完了", now])  
 
-        await message.add_reaction("✅")
+    await message.add_reaction("✅")  
 
-    # CALENDAR BOT
-    if message.channel.id == CALENDAR_CHANNEL:
+if message.channel.id == CALENDAR_CHANNEL:  
 
-        text = message.content
+    text = message.content  
 
-        event = {
-            "summary": text,
-            "start": {
-                "dateTime": datetime.datetime.utcnow().isoformat(),
-                "timeZone": "Asia/Tokyo",
-            },
-            "end": {
-                "dateTime": (datetime.datetime.utcnow() + datetime.timedelta(hours=1)).isoformat(),
-                "timeZone": "Asia/Tokyo",
-            },
-        }
+    event = {  
+        "summary": text,  
+        "start": {  
+            "dateTime": datetime.datetime.utcnow().isoformat(),  
+            "timeZone": "Asia/Tokyo",  
+        },  
+        "end": {  
+            "dateTime": (datetime.datetime.utcnow() + datetime.timedelta(hours=1)).isoformat(),  
+            "timeZone": "Asia/Tokyo",  
+        },  
+    }  
 
-        calendar_service.events().insert(
-            calendarId="primary",
-            body=event
-        ).execute()
+    calendar_service.events().insert(  
+        calendarId="primary",  
+        body=event  
+    ).execute()  
 
-        await message.add_reaction("📅")
+    await message.add_reaction("📅")  
 
-    # AUDIO SAVE BOT
-    if message.channel.id == AUDIO_CHANNEL:
+if message.channel.id == AUDIO_CHANNEL:  
 
-        for attachment in message.attachments:
+    for attachment in message.attachments:  
 
-            file_bytes = await attachment.read()
+        file_bytes = await attachment.read()  
 
-            file_metadata = {
-                "name": attachment.filename
-            }
+        file_metadata = {  
+            "name": attachment.filename  
+        }  
 
-            media = MediaIoBaseUpload(
-                io.BytesIO(file_bytes),
-                mimetype="audio/mpeg"
-            )
+        media = MediaIoBaseUpload(  
+            io.BytesIO(file_bytes),  
+            mimetype="audio/mpeg"  
+        )  
 
-            drive_service.files().create(
-                body=file_metadata,
-                media_body=media,
-                fields="id"
-            ).execute()
+        drive_service.files().create(  
+            body=file_metadata,  
+            media_body=media,  
+            fields="id"  
+        ).execute()  
 
-            await message.add_reaction("💾")
+        await message.add_reaction("💾")  
 
-    await bot.process_commands(message)
+await bot.process_commands(message)  
+```
 
 bot.run(TOKEN)
-```
