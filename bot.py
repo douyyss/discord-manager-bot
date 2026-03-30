@@ -17,6 +17,8 @@ TODO_CHANNEL = 1482700197833347112
 CALENDAR_CHANNEL = 1482561786678087720
 AUDIO_CHANNEL = 1482560346148569118
 
+AUDIO_FOLDER_ID = "1WURrvsfipWuZJZODiRaO5DOO04G4ckxa"
+
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
@@ -37,9 +39,11 @@ sheet = gc.open_by_key(SPREADSHEET_ID).sheet1
 drive_service = build("drive", "v3", credentials=credentials)
 calendar_service = build("calendar", "v3", credentials=credentials)
 
+
 @bot.event
 async def on_ready():
     print("BOT STARTED:", bot.user)
+
 
 @bot.event
 async def on_message(message):
@@ -47,20 +51,17 @@ async def on_message(message):
     if message.author.bot:
         return
 
+    # TODO
     if message.channel.id == TODO_CHANNEL:
         text = message.content
         now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
         sheet.append_row([text, "未完了", now])
         await message.add_reaction("✅")
 
+    # CALENDAR
     if message.channel.id == CALENDAR_CHANNEL:
 
         text = message.content
-
-    if message.channel.id == CALENDAR_CHANNEL:
-
-        text = message.content
-
         import re
 
         match = re.search(r'(\d+)月(\d+)日\s*(\d+)時', text)
@@ -103,16 +104,28 @@ async def on_message(message):
 
             await message.add_reaction("📅")
 
+    # AUDIO SAVE
     if message.channel.id == AUDIO_CHANNEL:
         for attachment in message.attachments:
+
             data = await attachment.read()
-            media = MediaIoBaseUpload(io.BytesIO(data), mimetype="audio/mpeg")
+
+            media = MediaIoBaseUpload(
+                io.BytesIO(data),
+                mimetype=attachment.content_type
+            )
+
             drive_service.files().create(
-                body={"name": attachment.filename},
+                body={
+                    "name": attachment.filename,
+                    "parents": [AUDIO_FOLDER_ID]
+                },
                 media_body=media
             ).execute()
+
             await message.add_reaction("💾")
 
     await bot.process_commands(message)
+
 
 bot.run(TOKEN)
