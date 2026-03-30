@@ -41,71 +41,74 @@ calendar_service = build("calendar", "v3", credentials=credentials)
 
 @bot.event
 async def on_ready():
-print(f"Logged in as {bot.user}")
+print("Logged in as", bot.user)
 
 @bot.event
 async def on_message(message):
 
 ```
-if message.author == bot.user:  
-    return  
+if message.author == bot.user:
+    return
 
-if message.channel.id == TODO_CHANNEL:  
+# TODO BOT
+if message.channel.id == TODO_CHANNEL:
 
-    text = message.content  
-    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")  
+    text = message.content
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    sheet.append_row([text, "未完了", now])  
+    sheet.append_row([text, "未完了", now])
 
-    await message.add_reaction("✅")  
+    await message.add_reaction("✅")
 
-if message.channel.id == CALENDAR_CHANNEL:  
+# CALENDAR BOT
+if message.channel.id == CALENDAR_CHANNEL:
 
-    text = message.content  
+    text = message.content
 
-    event = {  
-        "summary": text,  
-        "start": {  
-            "dateTime": datetime.datetime.utcnow().isoformat(),  
-            "timeZone": "Asia/Tokyo",  
-        },  
-        "end": {  
-            "dateTime": (datetime.datetime.utcnow() + datetime.timedelta(hours=1)).isoformat(),  
-            "timeZone": "Asia/Tokyo",  
-        },  
-    }  
+    event = {
+        "summary": text,
+        "start": {
+            "dateTime": datetime.datetime.utcnow().isoformat(),
+            "timeZone": "Asia/Tokyo"
+        },
+        "end": {
+            "dateTime": (datetime.datetime.utcnow() + datetime.timedelta(hours=1)).isoformat(),
+            "timeZone": "Asia/Tokyo"
+        }
+    }
 
-    calendar_service.events().insert(  
-        calendarId="primary",  
-        body=event  
-    ).execute()  
+    calendar_service.events().insert(
+        calendarId="primary",
+        body=event
+    ).execute()
 
-    await message.add_reaction("📅")  
+    await message.add_reaction("📅")
 
-if message.channel.id == AUDIO_CHANNEL:  
+# AUDIO SAVE BOT
+if message.channel.id == AUDIO_CHANNEL:
 
-    for attachment in message.attachments:  
+    for attachment in message.attachments:
 
-        file_bytes = await attachment.read()  
+        file_bytes = await attachment.read()
 
-        file_metadata = {  
-            "name": attachment.filename  
-        }  
+        file_metadata = {
+            "name": attachment.filename
+        }
 
-        media = MediaIoBaseUpload(  
-            io.BytesIO(file_bytes),  
-            mimetype="audio/mpeg"  
-        )  
+        media = MediaIoBaseUpload(
+            io.BytesIO(file_bytes),
+            mimetype="audio/mpeg"
+        )
 
-        drive_service.files().create(  
-            body=file_metadata,  
-            media_body=media,  
-            fields="id"  
-        ).execute()  
+        drive_service.files().create(
+            body=file_metadata,
+            media_body=media,
+            fields="id"
+        ).execute()
 
-        await message.add_reaction("💾")  
+        await message.add_reaction("💾")
 
-await bot.process_commands(message)  
+await bot.process_commands(message)
 ```
 
 bot.run(TOKEN)
