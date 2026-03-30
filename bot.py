@@ -66,7 +66,7 @@ async def on_message(message):
                 "timeZone": "Asia/Tokyo"
             }
         }
-        calendar_service.events().insert(calendarId="primary", body=event).execute()
+        calendar_service.events().insert(calendarId="dou.yyss@gmail.com", body=event).execute()
         await message.add_reaction("📅")
 
     if message.channel.id == AUDIO_CHANNEL:
