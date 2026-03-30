@@ -50,7 +50,6 @@ async def on_message(message):
 if message.author == bot.user:
     return
 
-# TODO BOT
 if message.channel.id == TODO_CHANNEL:
 
     text = message.content
@@ -60,7 +59,6 @@ if message.channel.id == TODO_CHANNEL:
 
     await message.add_reaction("✅")
 
-# CALENDAR BOT
 if message.channel.id == CALENDAR_CHANNEL:
 
     text = message.content
@@ -84,7 +82,6 @@ if message.channel.id == CALENDAR_CHANNEL:
 
     await message.add_reaction("📅")
 
-# AUDIO SAVE BOT
 if message.channel.id == AUDIO_CHANNEL:
 
     for attachment in message.attachments:
