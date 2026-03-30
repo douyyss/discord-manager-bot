@@ -19,7 +19,6 @@ AUDIO_CHANNEL = 1482560346148569118
 
 intents = discord.Intents.default()
 intents.message_content = True
-
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 creds_dict = json.loads(GOOGLE_CREDENTIALS)
@@ -33,7 +32,6 @@ scope = [
 credentials = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 
 gc = gspread.authorize(credentials)
-
 sheet = gc.open_by_key(SPREADSHEET_ID).sheet1
 
 drive_service = build("drive", "v3", credentials=credentials)
@@ -41,28 +39,23 @@ calendar_service = build("calendar", "v3", credentials=credentials)
 
 @bot.event
 async def on_ready():
-    print("Logged in as", bot.user)
+print("BOT STARTED:", bot.user)
 
 @bot.event
 async def on_message(message):
 
 ```
-if message.author == bot.user:
+if message.author.bot:
     return
 
 if message.channel.id == TODO_CHANNEL:
-
     text = message.content
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-
     sheet.append_row([text, "未完了", now])
-
     await message.add_reaction("✅")
 
 if message.channel.id == CALENDAR_CHANNEL:
-
     text = message.content
-
     event = {
         "summary": text,
         "start": {
@@ -74,35 +67,17 @@ if message.channel.id == CALENDAR_CHANNEL:
             "timeZone": "Asia/Tokyo"
         }
     }
-
-    calendar_service.events().insert(
-        calendarId="primary",
-        body=event
-    ).execute()
-
+    calendar_service.events().insert(calendarId="primary", body=event).execute()
     await message.add_reaction("📅")
 
 if message.channel.id == AUDIO_CHANNEL:
-
     for attachment in message.attachments:
-
-        file_bytes = await attachment.read()
-
-        file_metadata = {
-            "name": attachment.filename
-        }
-
-        media = MediaIoBaseUpload(
-            io.BytesIO(file_bytes),
-            mimetype="audio/mpeg"
-        )
-
+        data = await attachment.read()
+        media = MediaIoBaseUpload(io.BytesIO(data), mimetype="audio/mpeg")
         drive_service.files().create(
-            body=file_metadata,
-            media_body=media,
-            fields="id"
+            body={"name": attachment.filename},
+            media_body=media
         ).execute()
-
         await message.add_reaction("💾")
 
 await bot.process_commands(message)
