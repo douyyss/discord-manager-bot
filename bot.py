@@ -54,19 +54,49 @@ async def on_message(message):
         await message.add_reaction("✅")
 
     if message.channel.id == CALENDAR_CHANNEL:
-        text = message.content
+
+    text = message.content
+
+    import re
+
+    match = re.search(r'(\d+)月(\d+)日\s*(\d+)時', text)
+
+    if match:
+        month = int(match.group(1))
+        day = int(match.group(2))
+        hour = int(match.group(3))
+
+        now = datetime.datetime.now()
+
+        start_time = datetime.datetime(
+            year=now.year,
+            month=month,
+            day=day,
+            hour=hour,
+            minute=0
+        )
+
+        end_time = start_time + datetime.timedelta(hours=1)
+
+        title = text.split("時")[-1].strip()
+
         event = {
-            "summary": text,
+            "summary": title,
             "start": {
-                "dateTime": datetime.datetime.utcnow().isoformat(),
+                "dateTime": start_time.isoformat(),
                 "timeZone": "Asia/Tokyo"
             },
             "end": {
-                "dateTime": (datetime.datetime.utcnow() + datetime.timedelta(hours=1)).isoformat(),
+                "dateTime": end_time.isoformat(),
                 "timeZone": "Asia/Tokyo"
             }
         }
-        calendar_service.events().insert(calendarId="dou.yyss@gmail.com", body=event).execute()
+
+        calendar_service.events().insert(
+            calendarId="dou.yyss@gmail.com",
+            body=event
+        ).execute()
+
         await message.add_reaction("📅")
 
     if message.channel.id == AUDIO_CHANNEL:
