@@ -55,7 +55,7 @@ async def on_message(message):
 
     if message.channel.id == CALENDAR_CHANNEL:
 
-    text = message.content
+        text = message.content
 
     import re
 
