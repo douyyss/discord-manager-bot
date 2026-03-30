@@ -57,6 +57,10 @@ async def on_message(message):
 
         text = message.content
 
+    if message.channel.id == CALENDAR_CHANNEL:
+
+    text = message.content
+
     import re
 
     match = re.search(r'(\d+)月(\d+)日\s*(\d+)時', text)
