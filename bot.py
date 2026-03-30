@@ -108,24 +108,26 @@ async def on_message(message):
     if message.channel.id == AUDIO_CHANNEL:
         for attachment in message.attachments:
 
-            data = await attachment.read()
+            file_data = await attachment.read()
 
             media = MediaIoBaseUpload(
-                io.BytesIO(data),
+                io.BytesIO(file_data),
                 mimetype=attachment.content_type
             )
 
+            file_metadata = {
+                "name": attachment.filename,
+                "parents": ["1WURrvsfipWuZJZODiRaO5DOO04G4ckxa"]
+            }
+
             drive_service.files().create(
-                body={
-                    "name": attachment.filename,
-                    "parents": [AUDIO_FOLDER_ID]
-                },
+                body=file_metadata,
                 media_body=media,
                 supportsAllDrives=True
             ).execute()
 
             await message.add_reaction("💾")
-        
+
     await bot.process_commands(message)
 
 
