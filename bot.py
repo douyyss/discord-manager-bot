@@ -123,13 +123,12 @@ async def on_message(message):
             drive_service.files().create(
                 body=file_metadata,
                 media_body=media,
-                supportsAllDrives=True,
-                fields="id"
+                supportsAllDrives=True
             ).execute()
 
             await message.add_reaction("💾")
 
-    await bot.process_commands(message)
+        await bot.process_commands(message)
 
 
 bot.run(TOKEN)
