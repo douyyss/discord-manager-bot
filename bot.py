@@ -18,23 +18,25 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 async def on_ready():
     print(f'Logged in as {bot.user}')
 
+TODO_CHANNEL = 1482700197833347112
+CALENDAR_CHANNEL = 1482561786678087720
+AUDIO_CHANNEL = 1482560346148569118
+
+
 @bot.event
 async def on_message(message):
+
     if message.author == bot.user:
         return
 
-    # TODO BOT
-    if message.channel.name == "todo":
+    if message.channel.id == TODO_CHANNEL:
         print("TODO追加")
 
-    # 音源保存 BOT
-    if message.channel.name == "音源保存":
-        if message.attachments:
-            print("音源保存")
-
-    # カレンダー BOT
-    if message.channel.name == "calendar":
+    if message.channel.id == CALENDAR_CHANNEL:
         print("カレンダー追加")
+
+    if message.channel.id == AUDIO_CHANNEL:
+        print("音源保存")
 
     await bot.process_commands(message)
 
